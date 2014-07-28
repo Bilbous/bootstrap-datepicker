@@ -63,7 +63,7 @@
 				this.push.apply(this, new_array);
 			},
 			clear: function(){
-				this.length = 0;
+				this.splice(0);
 			},
 			copy: function(){
 				var a = new DateArray();
@@ -297,7 +297,12 @@
 			if (this.isInput){ // single input
 				this._events = [
 					[this.element, {
-						focus: $.proxy(this.show, this),
+						focus: $.proxy(function(){
+                            var readonly = this.element.attr('readonly');
+                            if (!(readonly && readonly.toLowerCase() !== 'false')) {
+                                this.show();
+                            }
+                        }, this),
 						keyup: $.proxy(function(e){
 							if ($.inArray(e.keyCode, [27,37,39,38,40,32,13,9]) === -1)
 								this.update();
@@ -310,7 +315,6 @@
 				this._events = [
 					// For components that are not readonly, allow keyboard nav
 					[this.element.find('input'), {
-						focus: $.proxy(this.show, this),
 						keyup: $.proxy(function(e){
 							if ($.inArray(e.keyCode, [27,37,39,38,40,32,13,9]) === -1)
 								this.update();
@@ -318,7 +322,12 @@
 						keydown: $.proxy(this.keydown, this)
 					}],
 					[this.component, {
-						click: $.proxy(this.show, this)
+						click: $.proxy(function(){
+                            var readonly = this.element.find('input').attr('readonly');
+                            if (!(readonly && readonly.toLowerCase() !== 'false')) {
+                                this.show();
+                            }
+                        }, this)
 					}]
 				];
 			}
